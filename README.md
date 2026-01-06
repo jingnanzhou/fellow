@@ -34,19 +34,13 @@ This knowledge enables intelligent coding assistance with:
 **Fellow is not yet in the official marketplace.** Install from a local clone:
 
 ```bash
-# Step 1: Clone Fellow repository
-git clone https://github.com/jingnanzhou/fellow.git
+# Step 1: Add as local marketplace
+claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
 
-# Step 2: Navigate to the directory
-cd fellow
-
-# Step 3: Add as local marketplace
-claude plugin marketplace add ./
-
-# Step 4: Install from local marketplace
+# Step 2: Install from local marketplace
 claude plugin marketplace install fellow@local_marketplace
 
-# Step 5: Verify installation
+# Step 3: Verify installation
 claude plugin list
 ```
 

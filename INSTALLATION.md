@@ -24,15 +24,14 @@ Fellow can be installed in three ways:
 **Right now, Fellow is not yet in the official marketplace.** Install from a local clone:
 
 ```bash
-# Step 1: Clone Fellow repository
-git clone https://github.com/jingnanzhou/fellow.git
-cd fellow
+# Step 1: Add as local marketplace
+claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
 
-# Step 2: Add as local marketplace
-claude plugin marketplace add ./
-
-# Step 3: Install from local marketplace
+# Step 2: Install from local marketplace
 claude plugin marketplace install fellow@local_marketplace
+
+# Step 3: Verify installation
+claude plugin list
 ```
 
 **What happens:**
@@ -52,8 +51,11 @@ claude plugin list
 **Once Fellow is published to a marketplace**, installation becomes simpler:
 
 ```bash
-# Official marketplace (after Anthropic approval)
+# Simple one-command installation
 claude plugin install fellow
+
+# Verify installation
+claude plugin list
 ```
 
 Claude Code will:

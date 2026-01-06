@@ -20,39 +20,6 @@ Before installing Fellow, ensure you have:
 !!! tip "VS Code Users"
     Fellow works seamlessly with the [Claude Code VS Code extension](vscode.md)! But you still need the CLI to install Fellow first. After CLI installation via marketplace commands, Fellow automatically works in both CLI and VS Code.
 
-## Quick Installation
-
-The fastest way to install Fellow:
-
-```bash
-# Install Fellow from the marketplace
-/plugin install fellow
-```
-
-That's it! Fellow will be automatically downloaded, verified, and enabled.
-
-## Verify Installation
-
-Check that Fellow is installed and working:
-
-```bash
-# List installed plugins
-/plugin list
-```
-
-You should see:
-```
-✓ fellow@user (v2.1.0) - Semantic knowledge extraction and context enrichment
-```
-
-Verify Fellow commands are available:
-
-```bash
-# These commands should now work:
-/build-kb --help
-/toggle-hooks status
-```
-
 ## Installation Methods
 
 Choose the installation method that fits your needs:
@@ -64,41 +31,37 @@ Choose the installation method that fits your needs:
 **Best for:** Everyone (current only option)
 
 ```bash
-# Step 1: Clone Fellow repository
-git clone https://github.com/jingnanzhou/fellow.git
-cd fellow
+# Step 1: Add as local marketplace
+claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
 
-# Step 2: Add as local marketplace
-claude plugin marketplace add ./
-
-# Step 3: Install from local marketplace
+# Step 2: Install from local marketplace
 claude plugin marketplace install fellow@local_marketplace
 
-# Step 4: Verify
+# Step 3: Verify
 claude plugin list
 ```
 
 **What this does:**
-- Registers the directory as a local marketplace
-- Reads `plugin.json` from the marketplace
+- Registers the GitHub repository as a local marketplace
+- Reads `plugin.json` from the repository
 - Installs Fellow from local marketplace
 - Enables Fellow automatically
 
 **Pros:**
 - ✅ Works immediately (no official marketplace needed)
-- ✅ Full control over plugin code
-- ✅ Can update by pulling latest changes
-- ✅ Can modify and customize
+- ✅ No cloning needed - installs directly from GitHub
+- ✅ Simple and fast installation
+- ✅ Works in both CLI and VS Code
 
 ### Method 2: From Marketplace (After Publishing - Future)
 
 **Will work after** Fellow is published to the official Claude Code marketplace.
 
 ```bash
-# Simple one-command installation (future)
+# Simple one-command installation
 claude plugin install fellow
 
-# Verify
+# Verify installation
 claude plugin list
 ```
 
@@ -127,6 +90,28 @@ claude plugin marketplace remove local_marketplace
 **What this does:**
 - Removes Fellow plugin from Claude Code
 - Removes the local marketplace reference
+
+## Verify Installation
+
+After installing Fellow, verify it's working correctly:
+
+```bash
+# List installed plugins
+claude plugin list
+```
+
+You should see:
+```
+✓ fellow@local_marketplace (v2.1.0) - Semantic knowledge extraction and context enrichment
+```
+
+Verify Fellow commands are available:
+
+```bash
+# These commands should now work:
+/build-kb --help
+/toggle-hooks status
+```
 
 ## Where is Fellow Installed?
 

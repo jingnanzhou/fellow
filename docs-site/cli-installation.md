@@ -145,12 +145,8 @@ Installed plugins are stored in:
 Once the CLI is installed, you can install Fellow:
 
 ```bash
-# Clone Fellow repository
-git clone https://github.com/jingnanzhou/fellow.git
-cd fellow
-
 # Add as local marketplace
-claude plugin marketplace add ./
+claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
 
 # Install Fellow from local marketplace
 claude plugin marketplace install fellow@local_marketplace

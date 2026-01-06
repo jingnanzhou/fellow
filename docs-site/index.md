@@ -197,10 +197,10 @@ Fellow is trusted by teams at:
 === "Installation"
 
     ```bash
-    # Clone and install (current method)
-    git clone https://github.com/jingnanzhou/fellow.git
-    cd fellow
-    claude plugin marketplace add ./
+    # Add as local marketplace
+    claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
+
+    # Install from local marketplace
     claude plugin marketplace install fellow@local_marketplace
 
     # Verify installation

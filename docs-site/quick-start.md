@@ -15,15 +15,11 @@ Get up and running with Fellow in 5 minutes. Fellow automatically enriches every
 !!! warning "Fellow Not Yet Published"
     Fellow is not yet in the official marketplace. Use local installation for now.
 
-**Clone and install Fellow:**
+**Install Fellow directly:**
 
 ```bash
-# Clone repository
-git clone https://github.com/jingnanzhou/fellow.git
-cd fellow
-
 # Add as local marketplace
-claude plugin marketplace add ./
+claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
 
 # Install from local marketplace
 claude plugin marketplace install fellow@local_marketplace
