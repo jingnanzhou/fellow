@@ -2,10 +2,12 @@
 
 # Fellow - Architectural Guardrails for Claude Code
 
-**Fellow automatically enriches every Claude Code request to prevent architectural drift and enforce codebase consistency. It's a Claude Code plugin that works in both the CLI and VS Code extension.**
+**Enrich Claude Code requests to prevent architectural drift and enforce codebase consistency. Claude Code plugin that works in both the CLI and VS Code extension.**
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-purple.svg)](https://claude.com/code)
+
+[Quick Start](#quick-start) · [Installation](#installation) · [Documentation](https://jingnanzhou.github.io/fellow/) · [Contributing](CONTRIBUTING.md)
 
 </div>
 
