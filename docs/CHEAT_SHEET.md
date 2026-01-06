@@ -1,6 +1,8 @@
 # Fellow - Quick Reference Cheat Sheet
 
-A quick reference guide for using Fellow, the semantic knowledge extraction and context enrichment plugin for Claude Code.
+**Fellow - Architectural Guardrails for Claude Code**
+
+A quick reference guide for using Fellow, the Claude Code plugin that automatically enriches every request to prevent architectural drift and enforce codebase consistency.
 
 ---
 

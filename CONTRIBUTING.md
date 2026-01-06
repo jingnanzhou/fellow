@@ -1,6 +1,10 @@
 # Contributing to Fellow
 
-Thank you for your interest in contributing to Fellow! This document provides guidelines and instructions for contributing.
+**Fellow - Architectural Guardrails for Claude Code**
+
+Thank you for your interest in contributing to Fellow! Fellow automatically enriches every Claude Code request to prevent architectural drift and enforce codebase consistency.
+
+This document provides guidelines and instructions for contributing.
 
 ## Table of Contents
 

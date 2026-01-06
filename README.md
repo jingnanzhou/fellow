@@ -1,6 +1,15 @@
-# Fellow - Semantic Knowledge Extraction for Claude Code
+<div align="center">
 
-A Claude Code plugin that extracts semantic knowledge from codebases and provides intelligent coding context, architectural boundaries, and guardrails.
+# Fellow - Architectural Guardrails for Claude Code
+
+**Fellow automatically enriches every Claude Code request to prevent architectural drift and enforce codebase consistency. It's a Claude Code plugin that works in both the CLI and VS Code extension.**
+
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-purple.svg)](https://claude.com/code)
+
+</div>
+
+---
 
 ## Overview
 

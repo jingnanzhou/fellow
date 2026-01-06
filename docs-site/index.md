@@ -289,5 +289,6 @@ Fellow is trusted by teams at:
 ---
 
 <p align="center">
-  <strong>Fellow - AI that knows your architecture</strong>
+  <strong>Fellow - Architectural Guardrails for Claude Code</strong><br>
+  <em>Automatically enrich every request to prevent drift and enforce consistency</em>
 </p>

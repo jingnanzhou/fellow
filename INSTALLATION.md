@@ -1,6 +1,8 @@
 # Fellow Plugin Installation Guide
 
-This guide explains how to install Fellow as a Claude Code plugin.
+**Fellow - Architectural Guardrails for Claude Code**
+
+This guide explains how to install Fellow, a Claude Code plugin that automatically enriches every request to prevent architectural drift and enforce codebase consistency.
 
 ## Prerequisites
 

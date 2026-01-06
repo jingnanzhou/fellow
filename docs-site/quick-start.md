@@ -1,6 +1,8 @@
 # Quick Start Guide
 
-Get up and running with Fellow in 5 minutes.
+**Fellow - Architectural Guardrails for Claude Code**
+
+Get up and running with Fellow in 5 minutes. Fellow automatically enriches every Claude Code request to prevent architectural drift and enforce codebase consistency.
 
 ## Prerequisites
 
