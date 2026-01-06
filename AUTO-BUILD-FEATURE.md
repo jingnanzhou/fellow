@@ -172,7 +172,9 @@ Auto-build can be controlled via configuration:
 
 ```bash
 # User installs Fellow
-claude plugin add ./fellow
+cd fellow
+claude plugin marketplace add ./
+claude plugin marketplace install fellow@local_marketplace
 
 # User starts coding without building KB
 claude

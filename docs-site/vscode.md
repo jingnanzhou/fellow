@@ -66,8 +66,11 @@ Now install Fellow using the Claude Code CLI (from step 1):
 git clone https://github.com/jingnanzhou/fellow.git
 cd fellow
 
-# Install from current directory
-claude plugin add ./
+# Add as local marketplace
+claude plugin marketplace add ./
+
+# Install from local marketplace
+claude plugin marketplace install fellow@local_marketplace
 
 # Verify installation
 claude plugin list
@@ -77,7 +80,7 @@ claude plugin list
     You need the Claude Code CLI to install plugins. Once installed, plugins are automatically available in the VS Code extension.
 
 !!! tip "After Publishing"
-    Once Fellow is published, installation will be simpler: `claude plugin add fellow`
+    Once Fellow is published, installation will be simpler: `claude plugin install fellow`
 
 ### 4. Start Using Fellow
 

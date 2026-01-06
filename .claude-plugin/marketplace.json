@@ -1,0 +1,30 @@
+{
+
+
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+
+  "name": "local_marketplace",
+  "version": "1.0.0",
+  "description": "Local marketplace for local plugins including fellow",
+  "owner": {
+    "name": "Jingnan Zhou",
+    "email": "jingnan@sample.com"
+  },
+  "plugins": [
+    {
+      "name": "fellow",
+      "version": "2.1.0",
+      "description": "Semantic knowledge extraction and context enrichment for Claude Code - automatically analyzes codebases to provide intelligent coding context, architectural boundaries, and guardrails",
+      "author": {
+        "name": "Jingnan Zhou",
+        "email": "jingnan.zhou@example.com"
+      },
+      "license": "Apache-2.0",
+      "repository": "https://github.com/jingnanzhou/fellow",
+      "source": "./"
+    }
+  ]
+
+
+
+}

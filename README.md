@@ -37,11 +37,16 @@ This knowledge enables intelligent coding assistance with:
 # Step 1: Clone Fellow repository
 git clone https://github.com/jingnanzhou/fellow.git
 
-# Step 2: Install from local directory
+# Step 2: Navigate to the directory
 cd fellow
-claude plugin add ./
 
-# Step 3: Verify installation
+# Step 3: Add as local marketplace
+claude plugin marketplace add ./
+
+# Step 4: Install from local marketplace
+claude plugin marketplace install fellow@local_marketplace
+
+# Step 5: Verify installation
 claude plugin list
 ```
 
@@ -53,24 +58,22 @@ Once Fellow is published to the official marketplace:
 
 ```bash
 # Simple one-command installation
-claude plugin add fellow
+claude plugin install fellow
 
 # Verify installation
 claude plugin list
 ```
 
-### Alternative Installation Methods
+### Removing the Plugin
 
-**From Git URL:**
-```bash
-# Install directly from GitHub
-claude plugin add https://github.com/jingnanzhou/fellow.git
-```
+To uninstall Fellow:
 
-**Temporary Testing (no installation):**
 ```bash
-# Use for single session only
-claude --plugin-dir ./fellow
+# Step 1: Uninstall the plugin
+claude plugin uninstall fellow@local_marketplace
+
+# Step 2: Remove the marketplace
+claude plugin marketplace remove local_marketplace
 ```
 
 **See [INSTALLATION.md](INSTALLATION.md) for comprehensive installation guide.**

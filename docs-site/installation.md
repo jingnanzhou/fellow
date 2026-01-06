@@ -18,7 +18,7 @@ Before installing Fellow, ensure you have:
     **[Install Claude Code CLI →](cli-installation.md)**
 
 !!! tip "VS Code Users"
-    Fellow works seamlessly with the [Claude Code VS Code extension](vscode.md)! But you still need the CLI to install Fellow first. After CLI installation via `claude plugin add ./`, Fellow automatically works in both CLI and VS Code.
+    Fellow works seamlessly with the [Claude Code VS Code extension](vscode.md)! But you still need the CLI to install Fellow first. After CLI installation via marketplace commands, Fellow automatically works in both CLI and VS Code.
 
 ## Quick Installation
 
@@ -68,54 +68,35 @@ Choose the installation method that fits your needs:
 git clone https://github.com/jingnanzhou/fellow.git
 cd fellow
 
-# Step 2: Install from current directory
-claude plugin add ./
+# Step 2: Add as local marketplace
+claude plugin marketplace add ./
 
-# Step 3: Verify
+# Step 3: Install from local marketplace
+claude plugin marketplace install fellow@local_marketplace
+
+# Step 4: Verify
 claude plugin list
 ```
 
 **What this does:**
-- Reads `plugin.json` from the current directory
-- Copies Fellow to `~/.claude/cache/plugins/fellow/`
-- Registers Fellow in your Claude Code settings
+- Registers the directory as a local marketplace
+- Reads `plugin.json` from the marketplace
+- Installs Fellow from local marketplace
 - Enables Fellow automatically
 
 **Pros:**
-- ✅ Works immediately (no marketplace needed)
+- ✅ Works immediately (no official marketplace needed)
 - ✅ Full control over plugin code
 - ✅ Can update by pulling latest changes
 - ✅ Can modify and customize
 
-### Method 2: Git URL (Alternative)
-
-**Best for:** Installing without manual cloning
-
-```bash
-# Install directly from GitHub
-claude plugin add https://github.com/jingnanzhou/fellow.git
-
-# Verify
-claude plugin list
-```
-
-**What this does:**
-- Claude Code clones the repository automatically
-- Installs to plugin cache
-- Same result as Method 1, but automated
-
-**Pros:**
-- ✅ No manual git clone needed
-- ✅ Claude Code handles everything
-- ✅ Works from any directory
-
-### Method 3: From Marketplace (After Publishing - Future)
+### Method 2: From Marketplace (After Publishing - Future)
 
 **Will work after** Fellow is published to the official Claude Code marketplace.
 
 ```bash
 # Simple one-command installation (future)
-claude plugin add fellow
+claude plugin install fellow
 
 # Verify
 claude plugin list
@@ -131,27 +112,21 @@ claude plugin list
 - ✅ Verified and tested releases
 - ✅ Security-checked by Claude Code
 
-### Method 4: Temporary Testing (No Installation)
+### Method 3: Removing the Plugin
 
-**Best for:** Quick testing without permanent installation
+To uninstall Fellow:
 
 ```bash
-# Clone repository
-git clone https://github.com/jingnanzhou/fellow.git
+# Step 1: Uninstall the plugin
+claude plugin uninstall fellow@local_marketplace
 
-# Use for one session only
-claude --plugin-dir ./fellow
+# Step 2: Remove the marketplace
+claude plugin marketplace remove local_marketplace
 ```
 
 **What this does:**
-- Loads Fellow for current session only
-- Does NOT copy to plugin cache
-- Does NOT persist after session ends
-
-**When to use:**
-- Testing Fellow before installing
-- Trying different versions
-- Plugin development and debugging
+- Removes Fellow plugin from Claude Code
+- Removes the local marketplace reference
 
 ## Where is Fellow Installed?
 
@@ -465,11 +440,11 @@ To update to the latest version:
 To completely remove Fellow:
 
 ```bash
-# Uninstall the plugin
-/plugin uninstall fellow
+# Step 1: Uninstall the plugin
+claude plugin uninstall fellow@local_marketplace
 
-# Optional: Remove plugin cache
-rm -rf ~/.claude/cache/plugins/fellow
+# Step 2: Remove the marketplace
+claude plugin marketplace remove local_marketplace
 
 # Optional: Remove knowledge bases from projects
 # (These are in your project directories at .fellow-data/)

@@ -22,8 +22,11 @@ Get up and running with Fellow in 5 minutes. Fellow automatically enriches every
 git clone https://github.com/jingnanzhou/fellow.git
 cd fellow
 
-# Install from current directory
-claude plugin add ./
+# Add as local marketplace
+claude plugin marketplace add ./
+
+# Install from local marketplace
+claude plugin marketplace install fellow@local_marketplace
 ```
 
 **Verify installation:**
@@ -36,10 +39,8 @@ claude plugin list
 # ✓ fellow (v2.1.0) - Semantic knowledge extraction...
 ```
 
-!!! tip "Alternative: Direct Git URL"
-    You can also install directly: `claude plugin add https://github.com/jingnanzhou/fellow.git`
-
-    Once published to the marketplace, installation will be simpler: `claude plugin add fellow`
+!!! tip "After Publishing"
+    Once published to the marketplace, installation will be simpler: `claude plugin install fellow`
 
 ## Step 2: Build Your First Knowledge Base
 

@@ -200,11 +200,12 @@ Fellow is trusted by teams at:
     # Clone and install (current method)
     git clone https://github.com/jingnanzhou/fellow.git
     cd fellow
-    claude plugin add ./
+    claude plugin marketplace add ./
+    claude plugin marketplace install fellow@local_marketplace
 
     # Verify installation
     claude plugin list
-    # ✓ fellow (v2.1.0)
+    # ✓ fellow@local_marketplace (v2.1.0)
     ```
 
 === "First Knowledge Base"

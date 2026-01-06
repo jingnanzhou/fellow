@@ -28,17 +28,17 @@ Fellow can be installed in three ways:
 git clone https://github.com/jingnanzhou/fellow.git
 cd fellow
 
-# Step 2: Install from local directory
-claude plugin add ./
+# Step 2: Add as local marketplace
+claude plugin marketplace add ./
 
-# Or specify absolute path
-claude plugin add /path/to/fellow
+# Step 3: Install from local marketplace
+claude plugin marketplace install fellow@local_marketplace
 ```
 
 **What happens:**
-1. Claude Code reads the `plugin.json` manifest
-2. Copies Fellow to `~/.claude/cache/plugins/fellow/`
-3. Verifies the plugin structure
+1. Claude Code registers the directory as a local marketplace
+2. Reads the `plugin.json` manifest from the marketplace
+3. Installs Fellow from the local marketplace
 4. Enables Fellow automatically
 
 **Verification:**
@@ -53,48 +53,29 @@ claude plugin list
 
 ```bash
 # Official marketplace (after Anthropic approval)
-claude plugin add fellow
-
-# Or from a custom marketplace
-claude plugin marketplace add https://github.com/jingnanzhou/fellow-marketplace
-claude plugin add fellow
+claude plugin install fellow
 ```
 
 Claude Code will:
-1. Download Fellow from the marketplace
-2. Copy it to the plugin cache
+1. Download Fellow from the official marketplace
+2. Install it automatically
 3. Verify and enable automatically
 
-### Method 3: Temporary Testing (No Installation)
+### Method 3: Removing the Plugin
 
-For quick testing without installing:
-
-```bash
-# Clone the repository
-git clone https://github.com/jingnanzhou/fellow.git
-cd fellow
-
-# Use --plugin-dir flag (plugin only active for this session)
-claude --plugin-dir ./fellow
-
-# Or from another directory
-claude --plugin-dir /path/to/fellow
-```
-
-**Difference from Method 1:**
-- `plugin add ./` = Permanently installs (copies to cache)
-- `--plugin-dir ./` = Temporary (only for current session)
-
-### Method 4: Direct Git URL (Alternative)
-
-Install directly from a Git URL:
+To uninstall Fellow:
 
 ```bash
-# Add Git repository as source
-claude plugin add https://github.com/jingnanzhou/fellow.git
+# Step 1: Uninstall the plugin
+claude plugin uninstall fellow@local_marketplace
+
+# Step 2: Remove the marketplace
+claude plugin marketplace remove local_marketplace
 ```
 
-**Note:** This clones the repository and installs it. Claude Code handles the git clone automatically.
+**What this does:**
+1. Removes Fellow plugin from your Claude Code installation
+2. Removes the local marketplace reference
 
 ## Verification
 
@@ -366,13 +347,13 @@ Fellow uses only Python standard library. If you see import errors:
 To remove Fellow completely:
 
 ```bash
-# Uninstall the plugin
-/plugin uninstall fellow
+# Step 1: Uninstall the plugin
+claude plugin uninstall fellow@local_marketplace
 
-# Remove plugin cache (optional)
-rm -rf ~/.claude/cache/plugins/fellow
+# Step 2: Remove the marketplace
+claude plugin marketplace remove local_marketplace
 
-# Remove any generated knowledge bases (optional)
+# Optional: Remove any generated knowledge bases
 # These are in your project directories at .fellow-data/
 ```
 

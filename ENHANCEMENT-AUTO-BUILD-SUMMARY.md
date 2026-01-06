@@ -269,7 +269,9 @@ Can now skip reading docs and start immediately:
 
 ```bash
 # Install Fellow
-claude plugin add ./fellow
+cd fellow
+claude plugin marketplace add ./
+claude plugin marketplace install fellow@local_marketplace
 
 # Start coding (no /build-kb needed upfront!)
 "Add authentication"
