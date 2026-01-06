@@ -1,0 +1,11 @@
+{
+  "name": "fellow",
+  "description": "Semantic knowledge extraction and context enrichment for Claude Code - automatically analyzes codebases to provide intelligent coding context, architectural boundaries, and guardrails",
+  "version": "2.1.0",
+  "author": {
+    "name": "Jingnan Zhou",
+    "email": "jingnan.zhou@example.com"
+  },
+  "license": "Apache-2.0",
+  "repository": "https://github.com/jingnanzhou/fellow"
+}

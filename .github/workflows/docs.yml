@@ -1,0 +1,49 @@
+name: Deploy Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs-site/**'
+      - 'mkdocs.yml'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          key: ${{ github.ref }}
+          path: .cache
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r docs-requirements.txt
+
+      - name: Build and deploy documentation
+        run: mkdocs gh-deploy --force --clean --verbose
+
+      - name: Summary
+        run: |
+          echo "## Documentation Deployed Successfully! :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "View your documentation at:" >> $GITHUB_STEP_SUMMARY
+          echo "https://${{ github.repository_owner }}.github.io/fellow/" >> $GITHUB_STEP_SUMMARY

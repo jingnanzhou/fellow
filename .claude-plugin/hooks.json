@@ -1,0 +1,24 @@
+{
+  "hooks": [
+    {
+      "name": "fellow-context-enrichment",
+      "type": "user-prompt-submit",
+      "description": "Automatically enriches coding requests with semantic knowledge from the knowledge base",
+      "enabled": true,
+      "script": "./hooks/enrich-context.sh",
+      "config": {
+        "detect_coding_requests": true,
+        "auto_load_kb": true,
+        "silent_mode": false,
+        "logging_enabled": true,
+        "min_confidence": 0.7,
+        "keywords": [
+          "add", "create", "implement", "build", "write", "fix", "refactor",
+          "update", "modify", "change", "enhance", "improve", "optimize",
+          "delete", "remove", "test", "debug", "validate", "endpoint",
+          "function", "class", "method", "service", "component", "module"
+        ]
+      }
+    }
+  ]
+}

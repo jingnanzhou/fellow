@@ -1,0 +1,216 @@
+# Fellow Documentation Site Configuration
+site_name: Fellow
+site_url: https://jingnanzhou.github.io/fellow
+site_author: Jingnan Zhou
+site_description: Semantic knowledge extraction and context enrichment for Claude Code - AI that knows your architecture
+
+# Documentation directory
+docs_dir: docs-site
+
+# Repository
+repo_name: jingnanzhou/fellow
+repo_url: https://github.com/jingnanzhou/fellow
+edit_uri: edit/main/docs/
+
+# Copyright
+copyright: Copyright &copy; 2026 Jingnan Zhou - Apache 2.0 License
+
+# Configuration
+theme:
+  name: material
+  language: en
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+  features:
+    - navigation.instant      # Instant loading
+    - navigation.tracking     # Anchor tracking
+    - navigation.tabs         # Top-level tabs
+    - navigation.tabs.sticky  # Sticky tabs
+    - navigation.sections     # Navigation sections
+    - navigation.expand       # Expand navigation by default
+    - navigation.indexes      # Section index pages
+    - navigation.top          # Back to top button
+    - search.suggest          # Search suggestions
+    - search.highlight        # Highlight search terms
+    - search.share            # Share search results
+    - content.code.copy       # Copy code blocks
+    - content.action.edit     # Edit button on pages
+    - content.action.view     # View source button
+
+  icon:
+    repo: fontawesome/brands/github
+    edit: material/pencil
+    view: material/eye
+
+# Plugins
+plugins:
+  - search:
+      lang: en
+      separator: '[\s\-\.]+'
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      htmlmin_opts:
+        remove_comments: true
+      cache_safe: true
+
+# Extensions
+markdown_extensions:
+  - admonition                    # Call-out boxes
+  - pymdownx.details              # Collapsible admonitions
+  - pymdownx.superfences:         # Code blocks
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:              # Tabbed content
+      alternate_style: true
+  - pymdownx.highlight:           # Code syntax highlighting
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite         # Inline code highlighting
+  - pymdownx.snippets             # Include snippets
+  - pymdownx.emoji:               # Emoji support
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.keys                 # Keyboard keys
+  - pymdownx.mark                 # Highlighting
+  - pymdownx.smartsymbols         # Smart symbols
+  - pymdownx.tasklist:            # Task lists
+      custom_checkbox: true
+  - attr_list                     # Attribute lists
+  - def_list                      # Definition lists
+  - footnotes                     # Footnotes
+  - meta                          # Meta tags
+  - md_in_html                    # Markdown in HTML
+  - tables                        # Tables
+  - toc:                          # Table of contents
+      permalink: true
+      toc_depth: 3
+
+# Extra
+extra:
+  version:
+    provider: mike
+    default: latest
+
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jingnanzhou/fellow
+      name: Fellow on GitHub
+    - icon: fontawesome/solid/envelope
+      link: mailto:fellow@example.com
+      name: Contact us
+
+  analytics:
+    provider: google
+    property: G-XXXXXXXXXX  # Replace with your GA4 property ID
+
+  consent:
+    title: Cookie consent
+    description: >-
+      We use cookies to recognize your repeated visits and preferences, as well
+      as to measure the effectiveness of our documentation and whether users
+      find what they're searching for.
+
+# Navigation
+nav:
+  - Home:
+    - Welcome: index.md
+    - Quick Start: quick-start.md
+    - Installation: installation.md
+    - CLI Installation: cli-installation.md
+    - VS Code: vscode.md
+    - Why Fellow?: why-fellow.md
+
+  - Getting Started:
+    - Overview: getting-started/overview.md
+    - First Knowledge Base: getting-started/first-kb.md
+    - Using Automatic Mode: getting-started/automatic-mode.md
+    - Using Manual Mode: getting-started/manual-mode.md
+    - Understanding Output: getting-started/understanding-output.md
+
+  - User Guide:
+    - Commands:
+      - Overview: user-guide/commands/overview.md
+      - build-kb: user-guide/commands/build-kb.md
+      - fellow: user-guide/commands/fellow.md
+      - toggle-hooks: user-guide/commands/toggle-hooks.md
+    - Hooks:
+      - Overview: user-guide/hooks/overview.md
+      - Configuration: user-guide/hooks/configuration.md
+      - Customization: user-guide/hooks/customization.md
+    - Knowledge Base:
+      - Structure: user-guide/knowledge-base/structure.md
+      - Factual Knowledge: user-guide/knowledge-base/factual.md
+      - Procedural Knowledge: user-guide/knowledge-base/procedural.md
+      - Conceptual Knowledge: user-guide/knowledge-base/conceptual.md
+    - Logging:
+      - Overview: user-guide/logging/overview.md
+      - Log Format: user-guide/logging/format.md
+      - Analysis: user-guide/logging/analysis.md
+
+  - Features:
+    - Incremental Updates: features/incremental-updates.md
+    - Automatic Enrichment: features/automatic-enrichment.md
+    - Architectural Guardrails: features/guardrails.md
+    - Legacy Code Support: features/legacy-support.md
+    - Team Collaboration: features/team-collaboration.md
+
+  - Use Cases:
+    - Overview: use-cases/overview.md
+    - Fast-Growing Startups: use-cases/startups.md
+    - Enterprise Modernization: use-cases/enterprise.md
+    - Legacy System Migration: use-cases/legacy-migration.md
+    - Open Source Projects: use-cases/open-source.md
+    - Onboarding New Developers: use-cases/onboarding.md
+
+  - Best Practices:
+    - Overview: best-practices/overview.md
+    - Knowledge Base Management: best-practices/kb-management.md
+    - Team Workflows: best-practices/team-workflows.md
+    - CI/CD Integration: best-practices/cicd.md
+    - Security Considerations: best-practices/security.md
+
+  - Reference:
+    - Cheat Sheet: reference/cheat-sheet.md
+    - Configuration Options: reference/configuration.md
+    - File Formats: reference/file-formats.md
+    - CLI Reference: reference/cli.md
+    - API Reference: reference/api.md
+
+  - Contributing:
+    - Overview: contributing/overview.md
+    - Development Setup: contributing/development.md
+    - Writing Agents: contributing/writing-agents.md
+    - Writing Documentation: contributing/documentation.md
+    - Code Style: contributing/code-style.md
+
+  - About:
+    - License: about/license.md
+    - Changelog: about/changelog.md
+    - Roadmap: about/roadmap.md
+    - FAQ: about/faq.md
+    - Contact: about/contact.md
