@@ -206,7 +206,8 @@ When this agent runs with a target project path:
    - Check file references
 
 7. **Write output**:
-   - Use Write tool to save JSON to `.fellow-data/semantic/procedural_knowledge.json`
+   - Use Write tool to save JSON to `<target-project>/.fellow-data/semantic/procedural_knowledge.json`
+   - IMPORTANT: The Write tool requires an absolute path. Use the full absolute path to the target project.
 
 8. **Report completion**:
    - Number of workflows extracted

@@ -25,8 +25,18 @@ This command controls whether Fellow automatically intercepts and enriches codin
 ## Implementation
 
 ```bash
-# Get the hook configuration file
-HOOKS_FILE="$(dirname "$(dirname "$0")")/.claude-plugin/hooks.json"
+# Get the directory where Fellow plugin is installed
+# Use BASH_SOURCE to get the actual script location, not execution location
+if [ -n "${BASH_SOURCE[0]}" ]; then
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+else
+  # Fallback for when BASH_SOURCE is not available
+  PLUGIN_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+fi
+
+# Get the hook configuration file from Fellow plugin directory
+HOOKS_FILE="$PLUGIN_DIR/.claude-plugin/hooks.json"
 
 # Parse the command
 case "$1" in

@@ -285,7 +285,8 @@ When this agent runs with a target project path:
    - Validate JSON format
 
 9. **Write output**:
-   - Use Write tool to save JSON to `.fellow-data/semantic/conceptual_knowledge.json`
+   - Use Write tool to save JSON to `<target-project>/.fellow-data/semantic/conceptual_knowledge.json`
+   - IMPORTANT: The Write tool requires an absolute path. Use the full absolute path to the target project.
 
 10. **Report completion**:
     - Architecture style identified
