@@ -118,58 +118,72 @@ When: Knowledge base exists AND (no flag OR `--update` flag)
 
 **Goal**: Identify files that changed since last extraction
 
+**CRITICAL**: This is an EXECUTABLE phase. You MUST run the change detection tool, not execute git commands manually.
+
 **Actions**:
 
-1. **Load Metadata**:
-   - Read `<target-path>/.fellow-data/semantic/extraction_metadata.json`
-   - Extract last extraction commit hash or timestamp
-   - Get file registry with hashes
+Run the change detection tool:
 
-2. **Detect Changes** (Git-based preferred):
-   ```bash
-   # Check if git repository
-   cd <target-path>
-   git rev-parse --git-dir
+```bash
+python3 ${CLAUDE_PLUGIN_ROOT}/tools/detect_changes.py <target-path>
+```
 
-   # If git repo:
-   # Get changed files since last extraction
-   git diff --name-only <last_commit_hash> HEAD
+**What the tool does**:
+1. Loads extraction metadata from `.fellow-data/semantic/extraction_metadata.json`
+2. Detects changes using git (preferred) or file comparison (fallback)
+3. Categorizes files as modified, new, or deleted
+4. Filters to only source code files
+5. Reports changes or confirms KB is up-to-date
 
-   # Get uncommitted changes
-   git diff --name-only
-   git ls-files --others --exclude-standard
-   ```
+**Expected Output (Changes Detected)**:
 
-3. **Fallback** (Non-git or Git unavailable):
-   - Compare file modification times with `last_analyzed` timestamps
-   - Calculate SHA-256 hashes and compare with stored hashes
-   - Identify new, modified, and deleted files
+```
+🔍 Detecting changes using git...
 
-4. **Categorize Changes**:
-   - **Modified files**: Files that exist in registry but content changed
-   - **New files**: Files not in registry
-   - **Deleted files**: Files in registry but no longer exist
-   - **Unchanged files**: Files with matching hashes/timestamps
+📋 Files Changed Since Last Extraction:
 
-5. **Filter Relevant Files**:
-   - Only consider source code files (*.py, *.js, *.java, etc.)
-   - Exclude: tests (optional), config files, documentation
+  📝 Modified (2 files):
+     • src/services/auth.py
+     • src/api/routes.py
 
-6. **Report Changes**:
-   ```
-   Files changed since last extraction:
-   - Modified: src/services/auth.py, src/api/routes.py
-   - New: src/services/notification.py
-   - Deleted: src/utils/deprecated.py
+  ✨ New (1 files):
+     • src/services/notification.py
 
-   Total: 4 files to analyze
-   ```
+  🗑️  Deleted (1 files):
+     • src/utils/deprecated.py
 
-7. **If No Changes**: Skip extraction, report KB is up-to-date:
-   ```
-   ✓ Knowledge base is up-to-date (no files changed)
-   ```
-   Exit early.
+📊 Total: 4 files to re-analyze
+🔍 Detection method: git
+
+📄 JSON Output:
+{
+  "status": "success",
+  "mode": "incremental",
+  "modified": ["src/services/auth.py", "src/api/routes.py"],
+  "new": ["src/services/notification.py"],
+  "deleted": ["src/utils/deprecated.py"],
+  "total": 4,
+  "detection_method": "git"
+}
+```
+
+**Expected Output (No Changes)**:
+
+```
+✅ Knowledge base is up-to-date
+
+   No files changed since last extraction
+   Detection method: git
+
+💡 Tip: Make code changes and run /fellow:build-kb again to update
+```
+
+**Important**:
+- Replace `<target-path>` with the absolute path to the target project
+- The tool automatically chooses between git and file comparison
+- Parse the JSON output to get the list of changed files for extraction
+- If `mode` is `"up_to_date"`, skip extraction and exit early
+- Do NOT execute git commands manually
 
 ---
 
@@ -246,132 +260,58 @@ When: Knowledge base exists AND (no flag OR `--update` flag)
 
 **Goal**: Merge extracted delta knowledge with existing knowledge base
 
+**CRITICAL**: This is an EXECUTABLE phase. You MUST run the merge tool, not display implementation details.
+
 **Actions**:
 
-#### 1. Load Existing Knowledge Base
+Run the knowledge merge tool:
 
-```python
-existing_factual = load_json("factual_knowledge.json")
-existing_procedural = load_json("procedural_knowledge.json")
-existing_conceptual = load_json("conceptual_knowledge.json")
-
-delta_factual = load_json("factual_knowledge_delta.json")
-delta_procedural = load_json("procedural_knowledge_delta.json")
-delta_conceptual = load_json("conceptual_knowledge_delta.json")  # may not exist
+```bash
+python3 ${CLAUDE_PLUGIN_ROOT}/tools/merge_knowledge.py <target-path>
 ```
 
-#### 2. Merge Factual Knowledge
+**What the tool does**:
+1. Loads existing knowledge base and delta files
+2. Merges factual knowledge (removes entities from changed files, adds new entities)
+3. Merges procedural knowledge (updates workflows affected by changed files)
+4. Merges conceptual knowledge (applies architectural changes if detected)
+5. Writes merged knowledge base files
+6. Cleans up delta files
+7. Reports merge statistics
 
-**Strategy**: Remove entities from changed files, add new entities
-
-```python
-# Get list of changed files
-changed_files = [list from Phase 1.5]
-
-# Remove entities from changed files
-filtered_entities = [
-    entity for entity in existing_factual["entities"]
-    if entity["grounding"]["file"] not in changed_files
-]
-
-# Add newly extracted entities
-merged_entities = filtered_entities + delta_factual["entities"]
-
-# Update relationships: Remove old, add new
-merged_relationships = update_relationships(
-    existing_factual["entity_relationships"],
-    delta_factual["entity_relationships"],
-    changed_files
-)
-
-# Create updated factual knowledge
-updated_factual = {
-    "metadata": update_metadata(existing_factual["metadata"], "incremental"),
-    "entities": merged_entities,
-    "entity_relationships": merged_relationships,
-    "summary": recalculate_summary(merged_entities, merged_relationships)
-}
-```
-
-#### 3. Merge Procedural Knowledge
-
-**Strategy**: Update workflows starting from or affected by changed files
-
-```python
-# Identify workflows to update:
-# - Workflows with entry points in changed files
-# - Workflows with steps in changed files
-
-workflows_to_remove = [
-    wf for wf in existing_procedural["workflows"]
-    if workflow_affected_by_changed_files(wf, changed_files)
-]
-
-# Keep unaffected workflows
-filtered_workflows = [
-    wf for wf in existing_procedural["workflows"]
-    if wf not in workflows_to_remove
-]
-
-# Add newly extracted/updated workflows
-merged_workflows = filtered_workflows + delta_procedural["workflows"]
-
-# Create updated procedural knowledge
-updated_procedural = {
-    "metadata": update_metadata(existing_procedural["metadata"], "incremental"),
-    "workflows": merged_workflows,
-    "summary": recalculate_summary(merged_workflows)
-}
-```
-
-#### 4. Merge Conceptual Knowledge
-
-**Strategy**:
-- If delta exists: Replace relevant sections
-- If no delta: Keep existing (no architectural changes)
-
-```python
-if delta_conceptual exists:
-    # Architectural changes detected
-    updated_conceptual = delta_conceptual
-    updated_conceptual["metadata"]["update_type"] = "architectural_change"
-else:
-    # No architectural changes
-    updated_conceptual = existing_conceptual
-    updated_conceptual["metadata"]["update_type"] = "no_change"
-    updated_conceptual["metadata"]["last_update"] = current_timestamp()
-```
-
-#### 5. Write Merged Knowledge Base
-
-```python
-write_json("factual_knowledge.json", updated_factual)
-write_json("procedural_knowledge.json", updated_procedural)
-write_json("conceptual_knowledge.json", updated_conceptual)
-
-# Clean up delta files
-delete("factual_knowledge_delta.json")
-delete("procedural_knowledge_delta.json")
-delete("conceptual_knowledge_delta.json")  # if exists
-```
-
-#### 6. Report Merge Statistics
+**Expected Output**:
 
 ```
-Knowledge Base Updated (Incremental):
+📦 Loading existing knowledge base...
+📦 Loading delta knowledge...
+🔄 Merging knowledge for 3 changed files...
+💾 Writing merged knowledge base...
+🧹 Cleaning up delta files...
 
-Factual Knowledge:
-- Entities removed: 3 (from changed files)
-- Entities added: 5 (new extraction)
-- Relationships updated: 8
+✅ Knowledge Base Updated (Incremental)
 
-Procedural Knowledge:
-- Workflows updated: 2
-- Workflows added: 1
+📊 Merge Statistics:
 
-Conceptual Knowledge:
-- Status: No architectural changes detected
+  Factual Knowledge:
+    • Entities removed: 3 (from changed files)
+    • Entities added: 5 (new extraction)
+    • Relationships updated: 8
+
+  Procedural Knowledge:
+    • Workflows updated: 2
+    • Workflows added: 1
+
+  Conceptual Knowledge:
+    • Status: No architectural changes
+
+📁 Knowledge base location: /path/to/project/.fellow-data/semantic/
 ```
+
+**Important**:
+- Replace `<target-path>` with the absolute path to the target project
+- The tool reads changed files from `extraction_metadata.json`
+- Delta files are automatically cleaned up after merge
+- Do NOT display the tool's source code or implementation details
 
 ---
 
@@ -439,16 +379,18 @@ Conceptual Knowledge:
    ```
 
 2. **Collect Git Information** (if available):
+
+   Run the git info tool:
+
    ```bash
-   # Get current commit
-   git rev-parse HEAD
-
-   # Get current branch
-   git rev-parse --abbrev-ref HEAD
-
-   # Check for uncommitted changes
-   git diff --quiet || echo "has_uncommitted_changes"
+   python3 ${CLAUDE_PLUGIN_ROOT}/tools/git_info.py <target-path>
    ```
+
+   This collects:
+   - Current commit hash
+   - Current branch name
+   - Uncommitted changes status
+   - Parse the JSON output for inclusion in metadata
 
 3. **Create Metadata Structure**:
    ```json
@@ -602,7 +544,7 @@ Mark all todos complete.
 
 2. If git repository, ensure `.fellow-data/` is in `.gitignore`:
    ```bash
-   python3 hooks/gitignore_helper.py <target-path>
+   python3 ${CLAUDE_PLUGIN_ROOT}/hooks/gitignore_helper.py <target-path>
    ```
 
 3. The helper script will:

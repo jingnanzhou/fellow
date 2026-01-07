@@ -33,7 +33,7 @@ Control whether Fellow automatically intercepts and enriches coding requests:
 Run the following command to toggle the hooks:
 
 ```bash
-python3 tools/toggle_hooks.py $ARGUMENTS
+python3 ${CLAUDE_PLUGIN_ROOT}/tools/toggle_hooks.py $ARGUMENTS
 ```
 
 **Important**:
@@ -64,21 +64,21 @@ The script will output appropriate messages:
 /fellow:toggle-hooks status
 ```
 
-Expected behavior: Execute `python3 tools/toggle_hooks.py status` and show its output
+Expected behavior: Execute `python3 ${CLAUDE_PLUGIN_ROOT}/tools/toggle_hooks.py status` and show its output
 
 ### Enable Hooks
 ```
 /fellow:toggle-hooks on
 ```
 
-Expected behavior: Execute `python3 tools/toggle_hooks.py on` and show its output
+Expected behavior: Execute `python3 ${CLAUDE_PLUGIN_ROOT}/tools/toggle_hooks.py on` and show its output
 
 ### Disable Hooks
 ```
 /fellow:toggle-hooks off
 ```
 
-Expected behavior: Execute `python3 tools/toggle_hooks.py off` and show its output
+Expected behavior: Execute `python3 ${CLAUDE_PLUGIN_ROOT}/tools/toggle_hooks.py off` and show its output
 
 ---
 

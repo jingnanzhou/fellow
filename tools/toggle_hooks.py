@@ -20,7 +20,22 @@ def find_plugin_dir() -> Optional[Path]:
     Returns:
         Path to the plugin directory, or None if not found
     """
-    # Method 1: Check if we're in the plugin development directory
+    # Method 1: Use the script's own location (most reliable)
+    # If this script is at <plugin>/tools/toggle_hooks.py, then plugin is parent's parent
+    script_path = Path(__file__).resolve()
+    potential_plugin_dir = script_path.parent.parent
+    plugin_json = potential_plugin_dir / ".claude-plugin" / "plugin.json"
+
+    if plugin_json.exists():
+        try:
+            with open(plugin_json) as f:
+                data = json.load(f)
+                if data.get("name") == "fellow":
+                    return potential_plugin_dir
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    # Method 2: Check current working directory (for development mode)
     current = Path.cwd()
     plugin_json = current / ".claude-plugin" / "plugin.json"
 
@@ -33,7 +48,7 @@ def find_plugin_dir() -> Optional[Path]:
         except (json.JSONDecodeError, OSError):
             pass
 
-    # Method 2: Search Claude Code's plugin installation directories
+    # Method 3: Search Claude Code's plugin installation directories
     home = Path.home()
     installed_plugins = home / ".claude" / "plugins" / "installed_plugins.json"
 
@@ -52,7 +67,7 @@ def find_plugin_dir() -> Optional[Path]:
         except (json.JSONDecodeError, OSError):
             pass
 
-    # Method 3: Search common plugin cache locations
+    # Method 4: Search common plugin cache locations
     cache_dir = home / ".claude" / "plugins" / "cache"
     if cache_dir.exists():
         for vendor_dir in cache_dir.iterdir():
@@ -160,7 +175,8 @@ def main():
     if not plugin_dir:
         print("⚠️  Could not locate Fellow plugin directory", file=sys.stderr)
         print("   Searched in:", file=sys.stderr)
-        print("   - Current directory (development mode)", file=sys.stderr)
+        print("   - Script's parent directory (installed mode)", file=sys.stderr)
+        print("   - Current working directory (development mode)", file=sys.stderr)
         print("   - ~/.claude/plugins/installed_plugins.json", file=sys.stderr)
         print("   - ~/.claude/plugins/cache/*", file=sys.stderr)
         sys.exit(1)
