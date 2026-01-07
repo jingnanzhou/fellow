@@ -70,7 +70,7 @@ cd fellow
 claude plugin marketplace add ./
 
 # Install from local marketplace
-claude plugin marketplace install fellow@local_marketplace
+claude plugin  install fellow@local_marketplace
 
 # Verify installation
 claude plugin list

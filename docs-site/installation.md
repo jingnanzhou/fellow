@@ -35,7 +35,7 @@ Choose the installation method that fits your needs:
 claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
 
 # Step 2: Install from local marketplace
-claude plugin marketplace install fellow@local_marketplace
+claude plugin  install fellow@local_marketplace
 
 # Step 3: Verify
 claude plugin list

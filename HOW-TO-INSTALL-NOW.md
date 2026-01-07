@@ -19,7 +19,7 @@ This is the most straightforward way to install Fellow right now:
 claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
 
 # Step 2: Install from local marketplace
-claude plugin marketplace install fellow@local_marketplace
+claude plugin  install fellow@local_marketplace
 
 # Step 3: Verify installation
 claude plugin list
@@ -32,7 +32,7 @@ claude plugin list
 
 **What this does:**
 1. `claude plugin marketplace add https://github.com/jingnanzhou/fellow.git` registers the GitHub repository as a local marketplace
-2. `claude plugin marketplace install fellow@local_marketplace` installs Fellow from that marketplace
+2. `claude plugin  install fellow@local_marketplace` installs Fellow from that marketplace
 3. Registers Fellow in `~/.claude/settings.json`
 4. Enables Fellow automatically
 
@@ -100,7 +100,7 @@ claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
 # Output: Marketplace 'local_marketplace' added successfully
 
 # 2. Install Fellow from local marketplace
-claude plugin marketplace install fellow@local_marketplace
+claude plugin  install fellow@local_marketplace
 # Output: Installing fellow@local_marketplace...
 
 # 3. Verify it's installed
@@ -143,7 +143,7 @@ This will work after:
 
 # Step 2: Install Fellow via CLI (same as above)
 claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
-claude plugin marketplace install fellow@local_marketplace
+claude plugin  install fellow@local_marketplace
 
 # Step 3: Fellow is now available in VS Code automatically!
 ```
@@ -181,7 +181,7 @@ curl -I https://github.com
 
 # Try again
 claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
-claude plugin marketplace install fellow@local_marketplace
+claude plugin  install fellow@local_marketplace
 ```
 
 ### Issue: Plugin installed but commands don't work
@@ -205,7 +205,7 @@ claude /build-kb --help
 # Remove the old marketplace and reinstall
 claude plugin marketplace remove local_marketplace
 claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
-claude plugin marketplace install fellow@local_marketplace
+claude plugin  install fellow@local_marketplace
 ```
 
 ---
@@ -247,7 +247,7 @@ claude /build-kb --help
 
 ### Q: Will `claude plugin install fellow` work now?
 
-**A:** No, not until Fellow is published to the official marketplace. Use the local marketplace method (`claude plugin marketplace add https://github.com/jingnanzhou/fellow.git` then `claude plugin marketplace install fellow@local_marketplace`) instead.
+**A:** No, not until Fellow is published to the official marketplace. Use the local marketplace method (`claude plugin marketplace add https://github.com/jingnanzhou/fellow.git` then `claude plugin  install fellow@local_marketplace`) instead.
 
 ---
 
@@ -256,7 +256,7 @@ claude /build-kb --help
 **Current Installation (Required Now):**
 ```bash
 claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
-claude plugin marketplace install fellow@local_marketplace
+claude plugin  install fellow@local_marketplace
 claude plugin list
 ```
 

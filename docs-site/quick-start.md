@@ -22,7 +22,7 @@ Get up and running with Fellow in 5 minutes. Fellow automatically enriches every
 claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
 
 # Install from local marketplace
-claude plugin marketplace install fellow@local_marketplace
+claude plugin  install fellow@local_marketplace
 ```
 
 **Verify installation:**

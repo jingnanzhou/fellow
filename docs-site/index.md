@@ -201,7 +201,7 @@ Fellow is trusted by teams at:
     claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
 
     # Install from local marketplace
-    claude plugin marketplace install fellow@local_marketplace
+    claude plugin  install fellow@local_marketplace
 
     # Verify installation
     claude plugin list

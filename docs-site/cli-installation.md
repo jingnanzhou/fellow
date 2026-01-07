@@ -149,7 +149,7 @@ Once the CLI is installed, you can install Fellow:
 claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
 
 # Install Fellow from local marketplace
-claude plugin marketplace install fellow@local_marketplace
+claude plugin  install fellow@local_marketplace
 
 # Verify Fellow is installed
 claude plugin list
