@@ -28,7 +28,7 @@ Fellow can be installed in three ways:
 claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
 
 # Step 2: Install from local marketplace
-claude plugin marketplace install fellow@local_marketplace
+claude plugin install fellow@local_marketplace
 
 # Step 3: Verify installation
 claude plugin list
