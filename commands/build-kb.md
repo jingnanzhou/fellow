@@ -103,9 +103,14 @@ When: Knowledge base exists AND (no flag OR `--update` flag)
 2. Determine target path:
    - If $ARGUMENTS is empty: Use current working directory (pwd)
    - If $ARGUMENTS provided: Use that path
-3. Validate target path exists and is a directory
-4. Create output directory: `mkdir -p <target-path>/.fellow-data/semantic/`
-5. Report target path and mode to user
+3. **CRITICAL: Convert to absolute path** using `realpath` or Python's `os.path.abspath()`
+   - Example: `realpath <target-path>` or `python3 -c "import os; print(os.path.abspath('<target-path>'))"`
+   - Store this as `TARGET_ABSOLUTE_PATH` - this will be used in all agent prompts
+4. Validate target path exists and is a directory
+5. Create output directory: `mkdir -p ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/`
+6. Report target path and mode to user
+
+**Important**: The `TARGET_ABSOLUTE_PATH` variable must be used in all subsequent phases when launching agents or writing files. Never use relative paths.
 
 ---
 
@@ -172,48 +177,63 @@ When: Knowledge base exists AND (no flag OR `--update` flag)
 
 **Goal**: Extract all three types of knowledge (full or incremental based on mode)
 
-**CRITICAL**: Launch all three agents in parallel for maximum efficiency
+**CRITICAL REQUIREMENTS**:
+1. Launch all three agents in parallel for maximum efficiency
+2. **MUST use the absolute path** (`TARGET_ABSOLUTE_PATH` from Phase 1) in all agent prompts
+3. Never use relative paths or placeholders like `<target-path>` in agent prompts
+4. The agents MUST receive the actual absolute path (e.g., `/Users/jingnan.zhou/workspace/my-project`) not placeholders
+
+**Example**: If the target project is at `/Users/jingnan.zhou/workspace/my-project`, the agent prompt should contain:
+- ✅ CORRECT: "Extract factual knowledge from the project at /Users/jingnan.zhou/workspace/my-project. ... Save results to /Users/jingnan.zhou/workspace/my-project/.fellow-data/semantic/factual_knowledge.json"
+- ❌ WRONG: "Extract factual knowledge from the project at <target-path>. ... Save results to <target-path>/.fellow-data/semantic/factual_knowledge.json"
 
 #### Mode A: Full Extraction
 
 **When**: No existing KB OR `--full` flag
 
 **Actions**:
-1. Launch three extraction agents simultaneously:
+1. **CRITICAL**: Use the `TARGET_ABSOLUTE_PATH` from Phase 1 in all agent prompts below. Replace the placeholder `<target-path>` with the actual absolute path.
+
+2. Launch three extraction agents simultaneously:
 
    **Agent 1: factual-knowledge-extractor**
-   - Prompt: "Extract factual knowledge from the project at <target-path>. Identify all significant entities, classes, data structures, and their relationships. Focus on the top 10-20 most important domain and technical entities. Save results to <target-path>/.fellow-data/semantic/factual_knowledge.json"
+   - Prompt: "Extract factual knowledge from the project at ${TARGET_ABSOLUTE_PATH}. Identify all significant entities, classes, data structures, and their relationships. Focus on the top 10-20 most important domain and technical entities. Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/factual_knowledge.json using the Write tool with the full absolute path."
 
    **Agent 2: procedural-knowledge-extractor**
-   - Prompt: "Extract procedural knowledge from the project at <target-path>. Identify key workflows, execution flows, and call sequences. Focus on the 5-10 most important workflows (request handlers, background jobs, data pipelines). Save results to <target-path>/.fellow-data/semantic/procedural_knowledge.json"
+   - Prompt: "Extract procedural knowledge from the project at ${TARGET_ABSOLUTE_PATH}. Identify key workflows, execution flows, and call sequences. Focus on the 5-10 most important workflows (request handlers, background jobs, data pipelines). Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/procedural_knowledge.json using the Write tool with the full absolute path."
 
    **Agent 3: conceptual-knowledge-extractor**
-   - Prompt: "Extract conceptual knowledge from the project at <target-path>. Identify the architecture style, layers, modules, design patterns, and architectural decisions. Save results to <target-path>/.fellow-data/semantic/conceptual_knowledge.json"
+   - Prompt: "Extract conceptual knowledge from the project at ${TARGET_ABSOLUTE_PATH}. Identify the architecture style, layers, modules, design patterns, and architectural decisions. Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/conceptual_knowledge.json using the Write tool with the full absolute path."
 
-2. Wait for all three agents to complete
-3. Verify all three JSON files were created successfully
+3. Wait for all three agents to complete
+4. Verify all three JSON files were created successfully by checking if they exist:
+   - `${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/factual_knowledge.json`
+   - `${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/procedural_knowledge.json`
+   - `${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/conceptual_knowledge.json`
 
 #### Mode B: Incremental Extraction
 
 **When**: KB exists AND (no flag OR `--update` flag) AND files changed
 
 **Actions**:
-1. Launch three extraction agents with file-specific prompts:
+1. **CRITICAL**: Use the `TARGET_ABSOLUTE_PATH` from Phase 1 in all agent prompts below. Replace the placeholder `<target-path>` with the actual absolute path.
+
+2. Launch three extraction agents with file-specific prompts:
 
    **Agent 1: factual-knowledge-extractor (targeted)**
-   - Prompt: "Extract factual knowledge from these CHANGED files in <target-path>: [list of changed files]. Identify entities, classes, data structures and their relationships ONLY in these files. Save results to <target-path>/.fellow-data/semantic/factual_knowledge_delta.json"
+   - Prompt: "Extract factual knowledge from these CHANGED files in ${TARGET_ABSOLUTE_PATH}: [list of changed files]. Identify entities, classes, data structures and their relationships ONLY in these files. Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/factual_knowledge_delta.json using the Write tool with the full absolute path."
    - Note: Output is temporary delta file
 
    **Agent 2: procedural-knowledge-extractor (targeted)**
-   - Prompt: "Extract procedural knowledge from these CHANGED files in <target-path>: [list of changed files]. Identify workflows that START or are SIGNIFICANTLY AFFECTED by functions in these files. Save results to <target-path>/.fellow-data/semantic/procedural_knowledge_delta.json"
+   - Prompt: "Extract procedural knowledge from these CHANGED files in ${TARGET_ABSOLUTE_PATH}: [list of changed files]. Identify workflows that START or are SIGNIFICANTLY AFFECTED by functions in these files. Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/procedural_knowledge_delta.json using the Write tool with the full absolute path."
    - Note: Output is temporary delta file
 
    **Agent 3: conceptual-knowledge-extractor (light analysis)**
-   - Prompt: "Analyze architectural changes in <target-path> considering these CHANGED files: [list of changed files]. If architectural patterns or layers changed, extract full conceptual knowledge. Otherwise, skip. Save results to <target-path>/.fellow-data/semantic/conceptual_knowledge_delta.json"
+   - Prompt: "Analyze architectural changes in ${TARGET_ABSOLUTE_PATH} considering these CHANGED files: [list of changed files]. If architectural patterns or layers changed, extract full conceptual knowledge. Otherwise, skip. Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/conceptual_knowledge_delta.json using the Write tool with the full absolute path."
    - Note: May skip if no architectural changes
 
-2. Wait for all agents to complete
-3. Verify delta files were created
+3. Wait for all agents to complete
+4. Verify delta files were created successfully by checking if they exist
 
 **Delta Files** (Temporary):
 - `factual_knowledge_delta.json` - Entities from changed files only
