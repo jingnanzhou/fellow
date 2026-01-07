@@ -26,13 +26,53 @@ This command controls whether Fellow automatically intercepts and enriches codin
 
 ```bash
 # Get the directory where Fellow plugin is installed
-# Use BASH_SOURCE to get the actual script location, not execution location
-if [ -n "${BASH_SOURCE[0]}" ]; then
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
-else
-  # Fallback for when BASH_SOURCE is not available
-  PLUGIN_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+# This needs to work regardless of where Claude Code is run from
+
+find_plugin_dir() {
+  # Method 1: Check if we're in the plugin development directory
+  if [ -f ".claude-plugin/plugin.json" ]; then
+    local plugin_name=$(grep -o '"name":\s*"[^"]*"' .claude-plugin/plugin.json | head -1 | cut -d'"' -f4)
+    if [ "$plugin_name" = "fellow" ]; then
+      echo "$(pwd)"
+      return 0
+    fi
+  fi
+
+  # Method 2: Search Claude Code's plugin installation directories
+  local installed_plugins="$HOME/.claude/plugins/installed_plugins.json"
+  if [ -f "$installed_plugins" ]; then
+    # Extract Fellow's install path from installed_plugins.json
+    local install_path=$(grep -A 2 '"fellow@' "$installed_plugins" | grep '"installPath"' | cut -d'"' -f4)
+    if [ -n "$install_path" ] && [ -d "$install_path" ]; then
+      echo "$install_path"
+      return 0
+    fi
+  fi
+
+  # Method 3: Search common plugin cache locations
+  for cache_dir in "$HOME/.claude/plugins/cache"/*; do
+    if [ -d "$cache_dir/fellow" ]; then
+      # Find the latest version
+      local latest_version=$(ls -1 "$cache_dir/fellow" | sort -V | tail -1)
+      if [ -n "$latest_version" ]; then
+        echo "$cache_dir/fellow/$latest_version"
+        return 0
+      fi
+    fi
+  done
+
+  return 1
+}
+
+# Find the plugin directory
+PLUGIN_DIR=$(find_plugin_dir)
+if [ -z "$PLUGIN_DIR" ]; then
+  echo "⚠️  Could not locate Fellow plugin directory"
+  echo "   Searched in:"
+  echo "   - Current directory (development mode)"
+  echo "   - ~/.claude/plugins/installed_plugins.json"
+  echo "   - ~/.claude/plugins/cache/*"
+  exit 1
 fi
 
 # Get the hook configuration file from Fellow plugin directory
