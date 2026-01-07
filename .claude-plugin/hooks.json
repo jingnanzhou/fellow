@@ -13,10 +13,31 @@
         "logging_enabled": true,
         "min_confidence": 0.7,
         "keywords": [
-          "add", "create", "implement", "build", "write", "fix", "refactor",
-          "update", "modify", "change", "enhance", "improve", "optimize",
-          "delete", "remove", "test", "debug", "validate", "endpoint",
-          "function", "class", "method", "service", "component", "module"
+          "add",
+          "create",
+          "implement",
+          "build",
+          "write",
+          "fix",
+          "refactor",
+          "update",
+          "modify",
+          "change",
+          "enhance",
+          "improve",
+          "optimize",
+          "delete",
+          "remove",
+          "test",
+          "debug",
+          "validate",
+          "endpoint",
+          "function",
+          "class",
+          "method",
+          "service",
+          "component",
+          "module"
         ]
       }
     }
