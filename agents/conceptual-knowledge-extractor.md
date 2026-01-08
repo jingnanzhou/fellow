@@ -85,6 +85,59 @@ Rules that must be followed:
 
 ---
 
+## File Filtering
+
+**IMPORTANT**: Use the shared filtering utilities to skip non-production code.
+
+### Using the Filter Module
+
+The filtering utilities are located at `${CLAUDE_PLUGIN_ROOT}/tools/file_filters.py`. When you need to programmatically check files, you can use the helper script:
+
+```bash
+# Check if files should be analyzed
+python3 ${CLAUDE_PLUGIN_ROOT}/tools/should_analyze.py src/app.js node_modules/lib.js
+# Output: ANALYZE: src/app.js
+#         SKIP: node_modules/lib.js
+```
+
+Or import directly in Python (path resolution is automatic):
+
+```python
+# The tools directory is auto-added to sys.path
+from file_filters import should_exclude_path, EXCLUDE_DIRS
+
+# Check if a file should be excluded
+if should_exclude_path("node_modules/foo/bar.js"):
+    # Skip this file
+    pass
+```
+
+### What Gets Excluded
+
+**Directories**: `dist`, `build`, `node_modules`, `venv`, `.next`, `.git`, `.vscode`, `__pycache__`, etc. (36 total in `EXCLUDE_DIRS`)
+
+**Test Files**: Any file/directory containing `test`, `tests`, `spec`, `__tests__`, `e2e`, `mocks`, `fixtures`, or matching patterns like `*.test.js`, `*.spec.ts`, `*_test.py`
+
+### Applying Filters in Practice
+
+**When using Glob**:
+- Avoid patterns that match excluded directories
+- Use specific paths like `src/**/*.py` rather than `**/*.py`
+- Manually skip results from excluded directories when reviewing
+
+**When using Grep**:
+- Use `path` parameter to search only in source directories (e.g., `src/`, `lib/`, `app/`)
+- Mentally filter out results from `node_modules/`, `dist/`, `test/`, etc.
+
+**Decision Rule**: When encountering a file path, skip it if:
+- It contains any of: `node_modules`, `dist`, `build`, `.next`, `venv`, `__pycache__`, `.git`
+- It's in a directory named: `test`, `tests`, `__tests__`, `spec`, `e2e`, `mocks`
+- The filename contains: `.test.`, `.spec.`, `_test.`, `test_`, `.mock.`
+
+**Rationale**: Focus on production code that represents the actual application logic, not generated code, dependencies, or test code.
+
+---
+
 ## Analysis Process
 
 ### Step 1: Survey Project Structure
@@ -147,9 +200,18 @@ Search for decision-related keywords:
 - "trade-off", "pros", "cons"
 - "alternative", "considered"
 
-### Step 6: Generate JSON Output
+### Step 6: Generate and Save JSON Incrementally
 
-Create a valid JSON file with this structure:
+**IMPORTANT FOR SCALABILITY**: To handle large projects without running out of context, save the JSON file incrementally as you extract knowledge.
+
+#### Incremental Saving Strategy
+
+1. **Initialize JSON structure** with metadata and empty arrays
+2. **Save after each major section** (architecture style, layers, modules, patterns, decisions, constraints)
+3. **Load, update, and save** - read existing JSON, add new data, write back
+4. **Keep minimal context** - don't retain full JSON in conversation, just summary
+
+#### JSON Structure Template
 
 ```json
 {
@@ -167,132 +229,103 @@ Create a valid JSON file with this structure:
       "Clear separation between presentation and data layers"
     ]
   },
-  "layers": [
-    {
-      "name": "API Layer",
-      "responsibility": "Handle HTTP requests and responses",
-      "contains_modules": ["api", "routes", "controllers"],
-      "can_depend_on": ["Service Layer"],
-      "cannot_depend_on": ["Data Layer", "Database"],
-      "file_patterns": ["api/**/*.py", "routes/**/*.py"]
-    },
-    {
-      "name": "Service Layer",
-      "responsibility": "Business logic orchestration",
-      "contains_modules": ["services", "business"],
-      "can_depend_on": ["Data Layer", "Domain Entities"],
-      "cannot_depend_on": ["API Layer"],
-      "file_patterns": ["services/**/*.py"]
-    }
-  ],
-  "modules": [
-    {
-      "name": "authentication",
-      "path": "src/authentication",
-      "responsibility": "User authentication and authorization",
-      "key_entities": ["User", "Token", "AuthService"],
-      "patterns_used": ["Repository Pattern", "Strategy Pattern"],
-      "dependencies": ["database", "encryption"],
-      "dependents": ["api", "middleware"]
-    }
-  ],
-  "design_patterns": [
-    {
-      "pattern": "Repository Pattern",
-      "usage": "Abstract data access throughout application",
-      "examples": [
-        {
-          "name": "UserRepository",
-          "file": "src/repositories/user_repository.py",
-          "line": 15
-        }
-      ],
-      "benefits": "Decouples business logic from data access"
-    }
-  ],
-  "design_decisions": [
-    {
-      "decision": "Use SSE for real-time communication instead of WebSockets",
-      "rationale": "Simpler implementation, better HTTP compatibility, unidirectional data flow matches our needs",
-      "trade_offs": {
-        "gained": ["Simpler server code", "Better proxy support", "Easier debugging"],
-        "lost": ["No client-to-server push", "Less efficient for bidirectional"]
-      },
-      "alternatives_considered": ["WebSockets", "Long polling"],
-      "evidence_location": "README.md:45"
-    }
-  ],
-  "constraints": [
-    {
-      "constraint": "API layer cannot directly access database layer",
-      "rationale": "Maintain separation of concerns and testability",
-      "enforcement": "Code review, import rules, linting",
-      "violations_if_broken": "Tight coupling, difficult testing, unclear boundaries"
-    }
-  ],
-  "summary": {
-    "architecture_type": "Layered Architecture",
-    "total_layers": 4,
-    "total_modules": 12,
-    "key_patterns": ["Repository", "Factory", "Strategy"],
-    "primary_constraint": "Strict layer dependency rules"
-  }
+  "layers": [],
+  "modules": [],
+  "design_patterns": [],
+  "design_decisions": [],
+  "constraints": [],
+  "summary": {}
 }
 ```
 
-### Step 7: Save Results
-Write the JSON output to: `<target-project>/.fellow-data/semantic/conceptual_knowledge.json`
+#### Incremental Saving Process
+
+After extracting each section, load the existing JSON, update it, and save:
+
+```python
+# Example pattern (adapt to your needs)
+import json
+
+# Load existing data
+with open(json_path, 'r') as f:
+    data = json.load(f)
+
+# Update specific section
+data['layers'].append(new_layer)
+
+# Save immediately
+with open(json_path, 'w') as f:
+    json.dump(data, f, indent=2)
+```
+
+**Save checkpoints**:
+- After extracting architecture style
+- After extracting each layer (or batch of layers)
+- After extracting each module (or batch of modules)
+- After extracting design patterns
+- After extracting decisions and constraints
+- After generating final summary
 
 ---
 
 ## Execution Instructions
 
-When this agent runs with a target project path:
+When this agent runs with a target project path, use **incremental saving** to handle large projects:
 
-1. **Create output directory** if it doesn't exist: `mkdir -p <target-project>/.fellow-data/semantic/`
+1. **Initialize output structure**:
+   - Create directory: `mkdir -p <target-project>/.fellow-data/semantic/`
+   - Write initial JSON with metadata and empty arrays to `<target-project>/.fellow-data/semantic/conceptual_knowledge.json`
+   - IMPORTANT: The Write tool requires an absolute path. Use the full absolute path to the target project.
 
 2. **Survey structure**:
    - List all directories
    - Read documentation files
    - Identify organizational patterns
 
-3. **Identify architecture style**:
+3. **Extract and save architecture style**:
    - Analyze directory structure
    - Search for architectural keywords
    - Read architecture docs
+   - **SAVE**: Load JSON, update `architecture_style`, save immediately
 
-4. **Map layers**:
+4. **Extract and save layers**:
    - Identify logical layers
    - Understand layer responsibilities
    - Document dependency rules
+   - **SAVE**: After each layer or batch of layers, load JSON, append to `layers` array, save
 
-5. **Analyze modules**:
+5. **Extract and save modules**:
    - Read key module files
    - Understand responsibilities
    - Map dependencies
+   - **SAVE**: After each module or batch of modules, load JSON, append to `modules` array, save
 
-6. **Extract decisions**:
+6. **Extract and save design patterns**:
+   - Identify patterns used
+   - Document examples
+   - **SAVE**: Load JSON, update `design_patterns`, save
+
+7. **Extract and save decisions**:
    - Search documentation
    - Look for decision keywords
    - Document rationale and trade-offs
+   - **SAVE**: Load JSON, update `design_decisions`, save
 
-7. **Identify constraints**:
+8. **Extract and save constraints**:
    - Find architectural rules
    - Document enforcement mechanisms
+   - **SAVE**: Load JSON, update `constraints`, save
 
-8. **Structure and validate**:
-   - Ensure all required fields are present
-   - Validate JSON format
-
-9. **Write output**:
-   - Use Write tool to save JSON to `<target-project>/.fellow-data/semantic/conceptual_knowledge.json`
-   - IMPORTANT: The Write tool requires an absolute path. Use the full absolute path to the target project.
+9. **Generate and save summary**:
+   - Calculate totals and key insights
+   - **SAVE**: Load JSON, update `summary`, save
 
 10. **Report completion**:
     - Architecture style identified
     - Number of layers and modules
     - Key patterns found
     - Output file location
+    - Confirm JSON was saved incrementally throughout extraction
 
 ---
 

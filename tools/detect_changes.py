@@ -15,6 +15,19 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
+# Add the tools directory to Python path to ensure imports work
+SCRIPT_DIR = Path(__file__).parent.resolve()
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+# Import shared filtering utilities
+from file_filters import (
+    EXCLUDE_DIRS,
+    should_exclude_path,
+    is_source_file,
+    SOURCE_EXTENSIONS
+)
+
 
 def load_metadata(kb_dir: Path) -> Optional[Dict]:
     """Load extraction metadata from the knowledge base directory."""
@@ -203,22 +216,15 @@ def get_fallback_changed_files(
                 modified.add(file_path)
 
     # Find new files (files not in registry)
-    source_extensions = {'.py', '.js', '.ts', '.tsx', '.jsx', '.java', '.go',
-                        '.rs', '.c', '.cpp', '.h', '.hpp', '.cs', '.rb',
-                        '.php', '.swift', '.kt', '.scala', '.sh'}
-
-    exclude_dirs = {'.git', '.fellow-data', 'node_modules', '__pycache__',
-                   'venv', '.venv', 'env', 'dist', 'build', 'target'}
-
     for root, dirs, files in os.walk(project_path):
         # Filter out excluded directories
-        dirs[:] = [d for d in dirs if d not in exclude_dirs]
+        dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
 
         for file in files:
             file_path = Path(root) / file
 
             # Only consider source code files
-            if file_path.suffix not in source_extensions:
+            if file_path.suffix not in SOURCE_EXTENSIONS:
                 continue
 
             # Get relative path
@@ -234,26 +240,16 @@ def get_fallback_changed_files(
     return modified, new, deleted
 
 
-def is_source_file(file_path: str) -> bool:
-    """Check if a file is a source code file."""
-    source_extensions = {'.py', '.js', '.ts', '.tsx', '.jsx', '.java', '.go',
-                        '.rs', '.c', '.cpp', '.h', '.hpp', '.cs', '.rb',
-                        '.php', '.swift', '.kt', '.scala', '.sh', '.bash'}
-
-    ext = Path(file_path).suffix.lower()
-    return ext in source_extensions
-
-
 def filter_source_files(
     modified: Set[str],
     new: Set[str],
     deleted: Set[str]
 ) -> Tuple[Set[str], Set[str], Set[str]]:
-    """Filter to only include source code files."""
+    """Filter to only include source code files and exclude generated/test files."""
     return (
-        {f for f in modified if is_source_file(f)},
-        {f for f in new if is_source_file(f)},
-        {f for f in deleted if is_source_file(f)}
+        {f for f in modified if is_source_file(f) and not should_exclude_path(f)},
+        {f for f in new if is_source_file(f) and not should_exclude_path(f)},
+        {f for f in deleted if is_source_file(f) and not should_exclude_path(f)}
     )
 
 
@@ -316,7 +312,9 @@ def print_changes(changes: Dict) -> None:
     if changes["status"] == "no_metadata":
         print("\n📋 Change Detection Result:")
         print("   Mode: Full Extraction (no previous extraction found)")
-        print("   All files will be analyzed")
+        print("   All source files will be analyzed")
+        print()
+        print("ℹ️  Note: Excluding build dirs (dist, node_modules, etc.) and test files")
         print()
         return
 
@@ -359,6 +357,8 @@ def print_changes(changes: Dict) -> None:
 
     print(f"📊 Total: {changes['total']} files to re-analyze")
     print(f"🔍 Detection method: {changes['detection_method']}")
+    print()
+    print("ℹ️  Note: Excluding build dirs (dist, node_modules, etc.) and test files")
     print()
 
 
