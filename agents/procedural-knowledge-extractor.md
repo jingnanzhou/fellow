@@ -1,7 +1,7 @@
 ---
 name: procedural-knowledge-extractor
 description: Extracts workflows, execution flows, and call sequences to understand HOW the code works
-tools: Glob, Grep, Read, Write, TodoWrite
+tools: Glob, Grep, Read, Bash, TodoWrite
 model: sonnet
 color: green
 ---
@@ -245,7 +245,9 @@ When this agent runs with a target project path, use **incremental saving** to h
 1. **Initialize output structure**:
    - Create directory: `mkdir -p <target-project>/.fellow-data/semantic/`
    - Write initial JSON with metadata and empty arrays to `<target-project>/.fellow-data/semantic/procedural_knowledge.json`
-   - IMPORTANT: The Write tool requires an absolute path. Use the full absolute path to the target project.
+   - **IMPORTANT: Do NOT use the Write tool** - it has permission issues with target project directories
+   - **Instead, use Python code** executed via Bash to save JSON files with json.dump()
+   - Use the full absolute path to the target project in your Python code
 
 2. **Discover entry points** using Glob and Grep:
    - Search for route handlers, main functions

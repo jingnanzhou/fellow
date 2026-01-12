@@ -1,7 +1,7 @@
 ---
 name: conceptual-knowledge-extractor
 description: Extracts high-level architecture, design patterns, and architectural decisions to understand the overall system design
-tools: Glob, Grep, Read, Write, TodoWrite
+tools: Glob, Grep, Read, Bash, TodoWrite
 model: sonnet
 color: purple
 ---
@@ -275,7 +275,9 @@ When this agent runs with a target project path, use **incremental saving** to h
 1. **Initialize output structure**:
    - Create directory: `mkdir -p <target-project>/.fellow-data/semantic/`
    - Write initial JSON with metadata and empty arrays to `<target-project>/.fellow-data/semantic/conceptual_knowledge.json`
-   - IMPORTANT: The Write tool requires an absolute path. Use the full absolute path to the target project.
+   - **IMPORTANT: Do NOT use the Write tool** - it has permission issues with target project directories
+   - **Instead, use Python code** executed via Bash to save JSON files with json.dump()
+   - Use the full absolute path to the target project in your Python code
 
 2. **Survey structure**:
    - List all directories

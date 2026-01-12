@@ -211,13 +211,13 @@ python3 ${CLAUDE_PLUGIN_ROOT}/tools/detect_changes.py <target-path>
 2. Launch three extraction agents simultaneously:
 
    **Agent 1: factual-knowledge-extractor**
-   - Prompt: "Extract factual knowledge from the project at ${TARGET_ABSOLUTE_PATH}. Identify all significant entities, classes, data structures, and their relationships. Focus on the top 10-20 most important domain and technical entities. Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/factual_knowledge.json using the Write tool with the full absolute path."
+   - Prompt: "Extract factual knowledge from the project at ${TARGET_ABSOLUTE_PATH}. Identify all significant entities, classes, data structures, and their relationships. Focus on the top 10-20 most important domain and technical entities. IMPORTANT: Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/factual_knowledge.json by writing Python code that uses json.dump(). Do NOT use the Write tool - use Bash to run Python code that saves the JSON file."
 
    **Agent 2: procedural-knowledge-extractor**
-   - Prompt: "Extract procedural knowledge from the project at ${TARGET_ABSOLUTE_PATH}. Identify key workflows, execution flows, and call sequences. Focus on the 5-10 most important workflows (request handlers, background jobs, data pipelines). Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/procedural_knowledge.json using the Write tool with the full absolute path."
+   - Prompt: "Extract procedural knowledge from the project at ${TARGET_ABSOLUTE_PATH}. Identify key workflows, execution flows, and call sequences. Focus on the 5-10 most important workflows (request handlers, background jobs, data pipelines). IMPORTANT: Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/procedural_knowledge.json by writing Python code that uses json.dump(). Do NOT use the Write tool - use Bash to run Python code that saves the JSON file."
 
    **Agent 3: conceptual-knowledge-extractor**
-   - Prompt: "Extract conceptual knowledge from the project at ${TARGET_ABSOLUTE_PATH}. Identify the architecture style, layers, modules, design patterns, and architectural decisions. Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/conceptual_knowledge.json using the Write tool with the full absolute path."
+   - Prompt: "Extract conceptual knowledge from the project at ${TARGET_ABSOLUTE_PATH}. Identify the architecture style, layers, modules, design patterns, and architectural decisions. IMPORTANT: Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/conceptual_knowledge.json by writing Python code that uses json.dump(). Do NOT use the Write tool - use Bash to run Python code that saves the JSON file."
 
 3. Wait for all three agents to complete
 4. Verify all three JSON files were created successfully by checking if they exist:
@@ -235,15 +235,15 @@ python3 ${CLAUDE_PLUGIN_ROOT}/tools/detect_changes.py <target-path>
 2. Launch three extraction agents with file-specific prompts:
 
    **Agent 1: factual-knowledge-extractor (targeted)**
-   - Prompt: "Extract factual knowledge from these CHANGED files in ${TARGET_ABSOLUTE_PATH}: [list of changed files]. Identify entities, classes, data structures and their relationships ONLY in these files. Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/factual_knowledge_delta.json using the Write tool with the full absolute path."
+   - Prompt: "Extract factual knowledge from these CHANGED files in ${TARGET_ABSOLUTE_PATH}: [list of changed files]. Identify entities, classes, data structures and their relationships ONLY in these files. IMPORTANT: Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/factual_knowledge_delta.json by writing Python code that uses json.dump(). Do NOT use the Write tool - use Bash to run Python code that saves the JSON file."
    - Note: Output is temporary delta file
 
    **Agent 2: procedural-knowledge-extractor (targeted)**
-   - Prompt: "Extract procedural knowledge from these CHANGED files in ${TARGET_ABSOLUTE_PATH}: [list of changed files]. Identify workflows that START or are SIGNIFICANTLY AFFECTED by functions in these files. Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/procedural_knowledge_delta.json using the Write tool with the full absolute path."
+   - Prompt: "Extract procedural knowledge from these CHANGED files in ${TARGET_ABSOLUTE_PATH}: [list of changed files]. Identify workflows that START or are SIGNIFICANTLY AFFECTED by functions in these files. IMPORTANT: Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/procedural_knowledge_delta.json by writing Python code that uses json.dump(). Do NOT use the Write tool - use Bash to run Python code that saves the JSON file."
    - Note: Output is temporary delta file
 
    **Agent 3: conceptual-knowledge-extractor (light analysis)**
-   - Prompt: "Analyze architectural changes in ${TARGET_ABSOLUTE_PATH} considering these CHANGED files: [list of changed files]. If architectural patterns or layers changed, extract full conceptual knowledge. Otherwise, skip. Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/conceptual_knowledge_delta.json using the Write tool with the full absolute path."
+   - Prompt: "Analyze architectural changes in ${TARGET_ABSOLUTE_PATH} considering these CHANGED files: [list of changed files]. If architectural patterns or layers changed, extract full conceptual knowledge. Otherwise, skip. IMPORTANT: Save results to ${TARGET_ABSOLUTE_PATH}/.fellow-data/semantic/conceptual_knowledge_delta.json by writing Python code that uses json.dump(). Do NOT use the Write tool - use Bash to run Python code that saves the JSON file."
    - Note: May skip if no architectural changes
 
 3. Wait for all agents to complete

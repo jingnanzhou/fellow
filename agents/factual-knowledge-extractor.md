@@ -1,7 +1,7 @@
 ---
 name: factual-knowledge-extractor
 description: Extracts data models, entities, classes, and relationships from codebase to understand WHAT exists
-tools: Glob, Grep, Read, Write, TodoWrite
+tools: Glob, Grep, Read, Bash, TodoWrite
 model: sonnet
 color: blue
 ---
@@ -217,15 +217,24 @@ For each prioritized entity (focus on top 10-20 most important):
 
 #### Incremental Saving Process
 
-After extracting each entity or batch of entities, load the existing JSON, update it, and save:
+After extracting each entity or batch of entities, load the existing JSON, update it, and save using Python code via Bash:
 
 ```python
-# Example pattern (adapt to your needs)
+# Example pattern - execute this via Bash tool
 import json
+import os
 
-# Load existing data
-with open(json_path, 'r') as f:
-    data = json.load(f)
+json_path = '/absolute/path/to/target-project/.fellow-data/semantic/factual_knowledge.json'
+
+# Create directory if needed
+os.makedirs(os.path.dirname(json_path), exist_ok=True)
+
+# Load existing data or initialize
+if os.path.exists(json_path):
+    with open(json_path, 'r') as f:
+        data = json.load(f)
+else:
+    data = {'metadata': {}, 'entities': [], 'entity_relationships': [], 'summary': {}}
 
 # Add new entity
 data['entities'].append(new_entity)
@@ -236,6 +245,13 @@ data['metadata']['total_entities_found'] = len(data['entities'])
 # Save immediately
 with open(json_path, 'w') as f:
     json.dump(data, f, indent=2)
+
+print(f"Saved {len(data['entities'])} entities to {json_path}")
+```
+
+**How to execute**: Use the Bash tool to run Python code:
+```bash
+python3 -c "import json, os; ... your Python code here ..."
 ```
 
 **Save checkpoints**:
@@ -252,7 +268,9 @@ When this agent runs with a target project path, use **incremental saving** to h
 1. **Initialize output structure**:
    - Create directory: `mkdir -p <target-project>/.fellow-data/semantic/`
    - Write initial JSON with metadata and empty arrays to `<target-project>/.fellow-data/semantic/factual_knowledge.json`
-   - IMPORTANT: The Write tool requires an absolute path. Use the full absolute path to the target project.
+   - **IMPORTANT: Do NOT use the Write tool** - it has permission issues with target project directories
+   - **Instead, use Python code** executed via Bash to save JSON files with json.dump()
+   - Use the full absolute path to the target project in your Python code
 
 2. **Discover entities** using Glob and Grep:
    - Search for class definitions
