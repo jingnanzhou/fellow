@@ -29,10 +29,6 @@ This knowledge enables intelligent coding assistance with:
 
 ## Installation
 
-### Current Installation (Until Published)
-
-**Fellow is not yet in the official marketplace.** Install from a local clone:
-
 ```bash
 # Step 1: Add as local marketplace
 claude plugin marketplace add https://github.com/jingnanzhou/fellow.git
@@ -45,18 +41,6 @@ claude plugin list
 ```
 
 **Works in both CLI and VS Code!** Fellow automatically works with the Claude Code VS Code extension.
-
-### After Publishing (Future)
-
-Once Fellow is published to the official marketplace:
-
-```bash
-# Simple one-command installation
-claude plugin install fellow
-
-# Verify installation
-claude plugin list
-```
 
 ### Removing the Plugin
 
